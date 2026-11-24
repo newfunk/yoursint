@@ -1,0 +1,14 @@
+# YourSint — blokkeer gevoelige paden
+<FilesMatch "^(config\.php)$">
+  Require all denied
+</FilesMatch>
+
+# Rate-limit bestanden en cache niet publiek via directory listing
+Options -Indexes
+
+# data/ alleen screenshots (jpg) en song-mp3s publiek
+RewriteEngine On
+RewriteRule ^data/shots/.+\.(json|php|txt)$ - [F,L]
+RewriteRule ^data/songs/.+\.(json|php|txt)$ - [F,L]
+RewriteRule ^data/(?!shots/|songs/).+ - [F,L]
+RewriteRule ^data/songs/.+(?<!\.mp3)$ - [F,L]

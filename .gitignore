@@ -1,0 +1,12 @@
+data/shots/*
+data/cache/*
+data/shares/*
+data/songs/*
+data/rate_*.json
+!data/shots/.gitkeep
+!data/cache/.gitkeep
+!data/shares/.gitkeep
+!data/songs/.gitkeep
+.env
+*.log
+.DS_Store
