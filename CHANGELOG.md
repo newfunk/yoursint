@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.1 — 2026-11-25
+
+- Mobile poem layout: keep each verse on one line, shrink font to fit
+- Center poem text; tighter parchment padding on small screens
+
 ## v1.0.0 — 2026-11-24
 
 - Initial YourSint release as standalone repository

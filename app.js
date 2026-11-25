@@ -48,6 +48,45 @@
   let sealClicks = 0;
   let sealTimer = null;
   let songPollTimer = null;
+  let poemFitTimer = null;
+
+  function renderPoem(text) {
+    const lines = String(text || '').replace(/\r\n/g, '\n').split('\n');
+    poemText.replaceChildren(
+      ...lines.map((line) => {
+        const span = document.createElement('span');
+        span.className = 'poem-line';
+        span.textContent = line === '' ? '\u00a0' : line;
+        return span;
+      })
+    );
+    poemText.style.fontSize = '';
+    requestAnimationFrame(() => fitPoemLines());
+  }
+
+  function fitPoemLines() {
+    if (!poemText || poemText.hidden) return;
+    const lines = [...poemText.querySelectorAll('.poem-line')];
+    if (!lines.length) return;
+    const maxW = poemText.clientWidth;
+    if (maxW < 40) return;
+
+    poemText.style.fontSize = '';
+    const base = parseFloat(getComputedStyle(poemText).fontSize) || 17;
+    let size = base;
+    const min = 11;
+    const tooWide = () => lines.some((el) => el.scrollWidth > maxW + 1);
+
+    while (size > min && tooWide()) {
+      size -= 0.5;
+      poemText.style.fontSize = size + 'px';
+    }
+  }
+
+  function schedulePoemFit() {
+    clearTimeout(poemFitTimer);
+    poemFitTimer = setTimeout(fitPoemLines, 80);
+  }
 
   function showModal(message, title = 'Melding') {
     modalTitle.textContent = title;
@@ -154,7 +193,7 @@
     resultTitle.textContent = state.title || '';
     resultUrl.textContent = state.url || (state.host ? 'https://' + state.host : 'https://…');
     poemFor.textContent = 'Voor ' + (state.brand || state.host || 'jouw bedrijf');
-    poemText.textContent = state.poem;
+    renderPoem(state.poem);
     poemText.style.animation = 'none';
     void poemText.offsetWidth;
     poemText.style.animation = '';
@@ -308,11 +347,13 @@
   btnShare.addEventListener('click', sharePoem);
 
   btnCopy.addEventListener('click', async () => {
-    const text = poemText.textContent || '';
+    const text = state.poem || '';
     if (!text) return;
     const ok = await copyText(text, 'Gedicht gekopieerd!');
     if (!ok) showModal('Kopiëren lukte niet. Selecteer de tekst handmatig.');
   });
+
+  window.addEventListener('resize', schedulePoemFit);
 
   btnCopyLink.addEventListener('click', async () => {
     if (!state.shareUrl) return;
