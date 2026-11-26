@@ -3,6 +3,13 @@
   Require all denied
 </FilesMatch>
 
+# Iconen en manifest met juiste content-type (Plesk kent .webmanifest niet altijd)
+<IfModule mod_mime.c>
+  AddType image/x-icon .ico
+  AddType image/svg+xml .svg
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
 # Rate-limit bestanden en cache niet publiek via directory listing
 Options -Indexes
 

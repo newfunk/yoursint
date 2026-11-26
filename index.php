@@ -35,9 +35,18 @@ $pageDesc = $share
     ? ('Gedicht van Sinterklaas voor ' . strip_tags($brand) . ': ' . $poemSnippet)
     : 'Laat Sinterklaas een persoonlijk gedicht schrijven over jouw bedrijf — op basis van je website. Van Yourhosting.';
 $ogUrl = $share ? ($baseUrl . '?g=' . rawurlencode($shareId)) : $baseUrl;
-$ogImage = $baseUrl . 'assets/yh-logo.svg';
+$ogImage = $baseUrl . 'assets/og-image.jpg';
+$ogImageW = 1200;
+$ogImageH = 630;
+$ogImageAlt = 'YourSint: Joeri met sintmijter. Sinterklaas schrijft een gedicht over jouw bedrijf.';
 if (!empty($share['screenshot']) && is_file(__DIR__ . '/' . $share['screenshot'])) {
-    $ogImage = $baseUrl . ltrim((string) $share['screenshot'], '/');
+    $shotSize = @getimagesize(__DIR__ . '/' . $share['screenshot']);
+    if (is_array($shotSize) && $shotSize[0] > 0 && $shotSize[1] > 0) {
+        $ogImage = $baseUrl . ltrim((string) $share['screenshot'], '/');
+        $ogImageW = (int) $shotSize[0];
+        $ogImageH = (int) $shotSize[1];
+        $ogImageAlt = 'Screenshot van de website van ' . html_entity_decode($brand, ENT_QUOTES, 'UTF-8');
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -54,14 +63,29 @@ if (!empty($share['screenshot']) && is_file(__DIR__ . '/' . $share['screenshot']
   <meta property="og:title" content="<?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>">
   <meta property="og:description" content="<?= htmlspecialchars($pageDesc, ENT_QUOTES, 'UTF-8') ?>">
   <meta property="og:url" content="<?= htmlspecialchars($ogUrl, ENT_QUOTES, 'UTF-8') ?>">
+  <meta property="og:locale" content="nl_NL">
   <meta property="og:image" content="<?= htmlspecialchars($ogImage, ENT_QUOTES, 'UTF-8') ?>">
+  <meta property="og:image:secure_url" content="<?= htmlspecialchars($ogImage, ENT_QUOTES, 'UTF-8') ?>">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="<?= $ogImageW ?>">
+  <meta property="og:image:height" content="<?= $ogImageH ?>">
+  <meta property="og:image:alt" content="<?= htmlspecialchars($ogImageAlt, ENT_QUOTES, 'UTF-8') ?>">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>">
   <meta name="twitter:description" content="<?= htmlspecialchars($pageDesc, ENT_QUOTES, 'UTF-8') ?>">
-  <link rel="icon" href="assets/yh-logo.svg" type="image/svg+xml">
+  <meta name="twitter:image" content="<?= htmlspecialchars($ogImage, ENT_QUOTES, 'UTF-8') ?>">
+  <meta name="twitter:image:alt" content="<?= htmlspecialchars($ogImageAlt, ENT_QUOTES, 'UTF-8') ?>">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/icon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="assets/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="YourSint">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IM+Fell+English:ital@1&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IM+Fell+English:ital@1&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="style.css?v=<?= htmlspecialchars($v) ?>">
 </head>
 <body<?= $share ? ' class="has-share"' : '' ?>>
@@ -71,15 +95,13 @@ if (!empty($share['screenshot']) && is_file(__DIR__ . '/' . $share['screenshot']
     <a class="brand" href="https://www.yourhosting.nl/" target="_blank" rel="noopener">
       <img src="assets/yh-logo.svg" alt="Yourhosting" class="logo">
     </a>
-    <span class="season-pill">5 december · YourSint</span>
   </header>
 
   <main class="stage">
     <!-- Start -->
     <section class="panel" id="scrStart"<?= $share ? ' hidden' : '' ?>>
       <div class="hero-copy">
-        <img class="joeri-hero" src="assets/joeri-sint.jpg" width="160" height="160" alt="Joeri met sintmijter" decoding="async">
-        <p class="eyebrow">Yourhosting · Sint-editie</p>
+        <img class="joeri-hero" src="assets/joeri-sint-336.jpg" width="160" height="160" alt="Joeri met sintmijter" decoding="async">
         <h1>Your<span>Sint</span></h1>
         <p class="lead">Vul de URL van je website in. Sinterklaas leest je homepage… en schrijft er een persoonlijk gedicht over.</p>
       </div>
@@ -87,15 +109,23 @@ if (!empty($share['screenshot']) && is_file(__DIR__ . '/' . $share['screenshot']
       <form class="url-form" id="startForm" autocomplete="on">
         <label for="inUrl">Website-URL</label>
         <div class="url-row">
-          <input id="inUrl" name="url" type="text" inputmode="url" placeholder="jouwbedrijf.nl" required maxlength="300" autocomplete="url">
+          <input id="inUrl" name="url" type="text" inputmode="url" placeholder="jouwbedrijf.nl" required maxlength="300" autocomplete="url" aria-describedby="startHint startStatus">
           <button class="btn" type="submit" id="btnStart">Maak mijn gedicht</button>
         </div>
-        <p class="hint">Geen login nodig. Je kunt zo vaak een nieuw gedicht maken als je wilt.</p>
+        <script>
+          // Alleen met muis/trackpad: op touch zou het toetsenbord ongevraagd openspringen.
+          (function () {
+            var el = document.getElementById('inUrl');
+            if (!el || el.closest('[hidden]') || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+            try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+          })();
+        </script>
+        <p class="hint" id="startHint">Geen login nodig.</p>
         <p class="status" id="startStatus" role="status"></p>
       </form>
 
       <div class="loading" id="loadingBox" hidden>
-        <img class="joeri-load" src="assets/joeri-sint.jpg" width="96" height="96" alt="" aria-hidden="true" decoding="async">
+        <img class="joeri-load" src="assets/joeri-sint-336.jpg" width="96" height="96" alt="" aria-hidden="true" decoding="async">
         <ol class="steps" id="loadSteps">
           <li data-step="fetch">Homepage ophalen…</li>
           <li data-step="shot">Screenshot maken…</li>
@@ -125,14 +155,14 @@ if (!empty($share['screenshot']) && is_file(__DIR__ . '/' . $share['screenshot']
 
         <article class="poem-card" id="poemCard">
           <header class="poem-head">
-            <button type="button" class="seal" id="sealBtn" title="S" aria-label="Zegel van Sinterklaas">S</button>
+            <button type="button" class="seal" id="sealBtn" title="Zegel van Sinterklaas" aria-label="Zegel van Sinterklaas"><svg viewBox="140 48 232 372" width="20" height="32" aria-hidden="true" focusable="false"><path d="M176 408 144 236C140 160 214 104 256 52c42 52 116 108 112 184l-32 172Z" fill="currentColor"/><rect x="237" y="138" width="38" height="170" rx="7" fill="#f7e3a3"/><rect x="194" y="182" width="124" height="38" rx="7" fill="#f7e3a3"/><path d="M164 346h184l-10 70H174Z" fill="#f7e3a3" opacity=".55"/></svg></button>
             <div>
-              <p class="poem-kicker">Gedicht van Sinterklaas</p>
               <h2 id="poemFor">Voor jouw bedrijf</h2>
             </div>
-            <img class="joeri-poem" src="assets/joeri-sint.jpg" width="72" height="72" alt="" aria-hidden="true" decoding="async">
+            <img class="joeri-poem" src="assets/joeri-sint-336.jpg" width="72" height="72" alt="" aria-hidden="true" decoding="async">
           </header>
           <pre class="poem" id="poemText"></pre>
+          <p class="poem-sign">Sinterklaas</p>
           <div class="poem-actions">
             <button type="button" class="btn" id="btnShare">Deel link</button>
             <button type="button" class="btn ghost" id="btnAgain">Nog een gedicht</button>

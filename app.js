@@ -53,9 +53,10 @@
   function renderPoem(text) {
     const lines = String(text || '').replace(/\r\n/g, '\n').split('\n');
     poemText.replaceChildren(
-      ...lines.map((line) => {
+      ...lines.map((line, i) => {
         const span = document.createElement('span');
         span.className = 'poem-line';
+        span.style.setProperty('--i', String(i));
         span.textContent = line === '' ? '\u00a0' : line;
         return span;
       })
@@ -105,7 +106,15 @@
   function setStatus(el, msg, isErr = false) {
     el.textContent = msg || '';
     el.classList.toggle('err', !!isErr);
+    if (el === startStatus) {
+      if (isErr && msg) inUrl.setAttribute('aria-invalid', 'true');
+      else inUrl.removeAttribute('aria-invalid');
+    }
   }
+
+  inUrl.addEventListener('input', () => {
+    if (inUrl.hasAttribute('aria-invalid')) setStatus(startStatus, '');
+  });
 
   function setStep(name) {
     loadingBox.hidden = false;
