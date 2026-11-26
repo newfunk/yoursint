@@ -40,6 +40,9 @@ Doppler-client: `shared/doppler.php` op de yoursitehulp-server (of sibling `shar
 - `api.php` — `generate`, `poem`, `get`, `song`, `song_status`
 - `config.php` — Doppler (geblokkeerd via `.htaccess`)
 - `app.js` / `style.css` — front-end
+- `favicon.ico`, `apple-touch-icon.png`, `site.webmanifest` — iconen in de webroot
+- `assets/icon.svg` — bron van het YourSint-icoon (ook PNG's `icon-32/192/512`, `icon-maskable-512`)
+- `assets/og-image.jpg` — preview-afbeelding (1200×630) voor Slack, WhatsApp, LinkedIn, X enz.
 - `data/` — cache, shares, shots, songs (runtime, niet in git)
 
 ## Deploy (Plesk Git)

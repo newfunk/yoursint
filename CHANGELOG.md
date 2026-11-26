@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.2 — 2026-11-26
+
+- Own YourSint icon (gold mitre on Sint red): `favicon.ico`, SVG/PNG icons, `apple-touch-icon.png`
+- `site.webmanifest` with 192/512 and maskable icons
+- Social preview: 1200×630 `assets/og-image.jpg` with og:image width/height/alt and twitter:image
+- Share links keep the site screenshot as og:image, now with its real dimensions
+- `.htaccess`: correct content-type for `.ico`, `.svg` and `.webmanifest`
+
 ## v1.0.1 — 2026-11-25
 
 - Mobile poem layout: keep each verse on one line, shrink font to fit

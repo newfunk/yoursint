@@ -35,9 +35,18 @@ $pageDesc = $share
     ? ('Gedicht van Sinterklaas voor ' . strip_tags($brand) . ': ' . $poemSnippet)
     : 'Laat Sinterklaas een persoonlijk gedicht schrijven over jouw bedrijf — op basis van je website. Van Yourhosting.';
 $ogUrl = $share ? ($baseUrl . '?g=' . rawurlencode($shareId)) : $baseUrl;
-$ogImage = $baseUrl . 'assets/yh-logo.svg';
+$ogImage = $baseUrl . 'assets/og-image.jpg';
+$ogImageW = 1200;
+$ogImageH = 630;
+$ogImageAlt = 'YourSint: Joeri met sintmijter. Sinterklaas schrijft een gedicht over jouw bedrijf.';
 if (!empty($share['screenshot']) && is_file(__DIR__ . '/' . $share['screenshot'])) {
-    $ogImage = $baseUrl . ltrim((string) $share['screenshot'], '/');
+    $shotSize = @getimagesize(__DIR__ . '/' . $share['screenshot']);
+    if (is_array($shotSize) && $shotSize[0] > 0 && $shotSize[1] > 0) {
+        $ogImage = $baseUrl . ltrim((string) $share['screenshot'], '/');
+        $ogImageW = (int) $shotSize[0];
+        $ogImageH = (int) $shotSize[1];
+        $ogImageAlt = 'Screenshot van de website van ' . html_entity_decode($brand, ENT_QUOTES, 'UTF-8');
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -54,11 +63,25 @@ if (!empty($share['screenshot']) && is_file(__DIR__ . '/' . $share['screenshot']
   <meta property="og:title" content="<?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>">
   <meta property="og:description" content="<?= htmlspecialchars($pageDesc, ENT_QUOTES, 'UTF-8') ?>">
   <meta property="og:url" content="<?= htmlspecialchars($ogUrl, ENT_QUOTES, 'UTF-8') ?>">
+  <meta property="og:locale" content="nl_NL">
   <meta property="og:image" content="<?= htmlspecialchars($ogImage, ENT_QUOTES, 'UTF-8') ?>">
+  <meta property="og:image:secure_url" content="<?= htmlspecialchars($ogImage, ENT_QUOTES, 'UTF-8') ?>">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="<?= $ogImageW ?>">
+  <meta property="og:image:height" content="<?= $ogImageH ?>">
+  <meta property="og:image:alt" content="<?= htmlspecialchars($ogImageAlt, ENT_QUOTES, 'UTF-8') ?>">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>">
   <meta name="twitter:description" content="<?= htmlspecialchars($pageDesc, ENT_QUOTES, 'UTF-8') ?>">
-  <link rel="icon" href="assets/yh-logo.svg" type="image/svg+xml">
+  <meta name="twitter:image" content="<?= htmlspecialchars($ogImage, ENT_QUOTES, 'UTF-8') ?>">
+  <meta name="twitter:image:alt" content="<?= htmlspecialchars($ogImageAlt, ENT_QUOTES, 'UTF-8') ?>">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/icon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="assets/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="YourSint">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
